@@ -1,6 +1,7 @@
 import os
 from datetime import datetime
 import re
+from tqdm import tqdm
 
 openings = {}       # opening of the game
 elo_dif = {}        # difference between the ranking of the two players
@@ -37,7 +38,12 @@ def parser_to_get_relevant_data(path):
 
 
 def calc_turn(start, end):
-    return datetime.strptime(start, FMT) - datetime.strptime(end, FMT)
+    a = datetime.strptime(start, FMT)
+    b = datetime.strptime(end, FMT)
+    if a > b:
+        return a - b
+    else:
+        return b - a
 
 
 def calc_all_turns(times):
@@ -70,7 +76,7 @@ def parser(path):
     i = 0
     whiteelo = 0
 
-    for line in f:
+    for line in tqdm(f):
         if '"' in line:
             start_quote = line.index('"')
             end_quote = line.index('"', start_quote + 1)
@@ -91,6 +97,8 @@ def parser(path):
                     openings[i] = param
         elif line != '\n':
             turns[str(i) + 'w'], turns[str(i) + 'b'] = get_turns(line)
+
+    print("finished parsing.")
 
 
 def main():

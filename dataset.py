@@ -104,9 +104,26 @@ class ChessDataset(Dataset):
 
 
 def main():
-    data_parser.parser(r"snip_chess.txt")
+    data_parser.parser(r"data/data.txt")
     data = ChessDataset(data_parser.openings, data_parser.elo_dif, data_parser.higher_ranker, data_parser.utc_time,
                         data_parser.turns)
+
+    avg = 0
+    i = 0
+    all_turns = 0
+    max_t = 0
+    min_t = 1000
+    for turn in data_parser.turns.values():
+        for t in turn:
+            if t.seconds > max_t:
+                max_t = t.seconds
+            if t.seconds < min_t:
+                min_t = t.seconds
+            avg += t.seconds
+            all_turns += 1
+
+    avg /= all_turns
+    print(f"min: {min_t}, max: {max_t}, avg: {avg}")
 
 
 if __name__ == "__main__":
